@@ -46,7 +46,6 @@
           <!-- The application main page -->
 
           <div data-role="page" id="hello-page">
-
           <form ng-submit="addTask()" class="" role="form">
           <div class="form-group">
                                                   <label class="" for="backendCredentials">Task</label> <input
@@ -60,8 +59,9 @@
           <div ng-show="category[1].length > 0"><h2>{{category[0]}}</h2>
           <ul ng-repeat="task in category[1]">
           <li><input type="checkbox" ng-model="task.done"/><span ng-class="{'done': task.done, 'overdue' : task.dueDate !=null && task.dueDate < getDay(0)}">{{task.desc}}</span>
-<a class="datebutton" ng-click="currentTask = task" ng-if="task.dueDate != null">{{task.dueDate|date}}</a>
-<a class="datebutton" ng-click="currentTask = task" ng-if="task.dueDate === null">No date</a>
+
+<button class="datebutton" onClick="displayDate()" ng-click="setTask(task)" ng-if="task.dueDate != null">{{task.dueDate|date}}</button>
+<button class="datebutton" onClick="displayDate()" ng-click="setTask(task)" ng-if="task.dueDate === null">No date</button>
 
           </li>
           </ul>
@@ -69,14 +69,21 @@
           </div>
 
 
-            <div data-role="dialog" id="dateDialog">
+            <div data-role="dialog" id="dateDialog" class="date-dialog">
                 <section>
-                    <h1></h1>
+                    <h1>Task: {{currentTask.desc}}</h1>
                     <menu>
-                        <button data-role="button" id="no">OK</button>
+
+                        <button data-role="button" ng-click="currentTask.dueDate = getDay(0)" onClick="hideDate()" >Today</button>
+                        <button data-role="button" ng-click="currentTask.dueDate = getDay(1)" onClick="hideDate()" >Tomorrow</button>
+                        <button data-role="button" ng-click="currentTask.dueDate = null" onClick="hideDate()" >No date</button>
+
+                        <button data-role="button"  onClick="hideDate()">Cancel</button>
                     </menu>
                 </section>
             </div>
+
+
 
           </div>
 

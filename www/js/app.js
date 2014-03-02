@@ -2,8 +2,9 @@
  * Wait before the DOM has been loaded before initializing the Ubuntu UI layer
  */
 
+var UI = new UbuntuUI();
+
 $(document).ready(function() {
-    var UI = new UbuntuUI();
     UI.init();
 
     // Wire all the simple logic
@@ -37,14 +38,6 @@ $(document).ready(function() {
     };
 
 
-    function displayDate() {
-        UI.dialog('dateDialog').show();
-    };
-
-    $(document.body).on('click', '.datebutton' ,function(){
-        alert("lehi")
-    });
-
     document.getElementById('call').addEventListener('click', function() {
         var sc = getSelectedContacts();
         if (! sc || sc.length !== 1) {
@@ -70,3 +63,12 @@ $(document).ready(function() {
             console.log('Platform layer API ready');
     }, false);
 });
+
+
+function displayDate() {
+    UI.dialog('dateDialog').show();
+};
+
+function hideDate() {
+    UI.dialog('dateDialog').hide();
+};

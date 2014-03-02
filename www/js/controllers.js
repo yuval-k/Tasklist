@@ -67,11 +67,13 @@ Task.prototype.getPriority = function(words) {
    return null;
 }
 
-
+/////////////////////////////////////////////////////////////////////////////
     $scope.getDay = getDay;
     $scope.tasks = [];
 
     $scope.currentTask = null;
+
+    $scope.currentT = "";
 
     // these will get updated form the parent obj when it is changed..
     $scope.pastDue = [];
@@ -116,12 +118,8 @@ Task.prototype.getPriority = function(words) {
      return result;
   }
 
-   $scope.change = function(task, value) {
-       if (!value) {
-           task.dueDate = null;
-       } else {
-           task.dueDate = parseInteger(value);
-       }
+   $scope.setTask = function(task) {
+       $scope.currentTask = task;
    }
   
     function refreshTasks(value) {
@@ -147,8 +145,10 @@ Task.prototype.getPriority = function(words) {
           $scope.getTaskForDate(weekFromToday, null).forEach(function(entry){$scope.futureTasks.push(entry);});
 
       }
-  $scope.$watch('tasks', refreshTasks, true);
-  
+    $scope.$watch('tasks', refreshTasks, true);
+
+    $scope.addTask("today do stuff");
+    $scope.addTask("other do stuff");
 }
 
 
