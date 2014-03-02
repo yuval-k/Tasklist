@@ -1,0 +1,15 @@
+{
+    "architecture": "all",
+    "description": "description of Tasklist",
+    "framework": "ubuntu-sdk-13.10",
+    "hooks": {
+        "Tasklist": {
+            "apparmor": "Tasklist.json",
+            "desktop": "Tasklist.desktop"
+        }
+    },
+    "maintainer": "",
+    "name": "com.ubuntu.developer.username.tasklist",
+    "title": "Tasklist",
+    "version": "0.1"
+}
