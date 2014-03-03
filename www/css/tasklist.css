@@ -5,3 +5,11 @@
 .overdue {
     color : red;
 }
+
+
+.datebutton {
+    width : auto;
+    float : right;
+    position:absolute;
+    right:0.5rem;
+}

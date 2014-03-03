@@ -145,10 +145,33 @@ Task.prototype.getPriority = function(words) {
           $scope.getTaskForDate(weekFromToday, null).forEach(function(entry){$scope.futureTasks.push(entry);});
 
       }
-    $scope.$watch('tasks', refreshTasks, true);
 
-    $scope.addTask("today do stuff");
-    $scope.addTask("other do stuff");
+    function tasksChanged() {
+        refreshTasks();
+        localStorage["tasks"] = JSON.stringify($scope.tasks);
+    }
+
+    $scope.$watch('tasks', tasksChanged, true);
+
+    if(localStorage["tasks"]) {
+        $scope.tasks = JSON.parse(localStorage["tasks"]);
+    }
+
+    $scope.deleteDone = function() {
+        var len = $scope.tasks.length
+        while (len--) {
+            if ($scope.tasks[i].done) {
+                $scope.tasks.splice(i,1);
+            }
+        }
+    }
+
+    var deleteDoneTask = $interval($scope.deleteDone, 5*1000);
+    $scope.$on('$destroy', function() {
+      // Make sure that the interval is destroyed too
+      $interval.cancel(deleteDoneTask);
+    });
+
 }
 
 
