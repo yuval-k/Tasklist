@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Tasklist
 Exec=ubuntu-html5-app-launcher $@ --www=www
-Icon=qmlscene
+Icon=icon.png
 Terminal=false
 Type=Application
 X-Ubuntu-Touch=true
