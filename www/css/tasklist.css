@@ -8,11 +8,17 @@
 
 .small-button {
 width : 8rem;
-
 }
 
 .float-right {
     float : right;
     position:absolute;
     right:0.5rem;
+}
+
+[data-role="content"] {
+
+padding-right:1em;
+padding-left:1em;
+width:auto;
 }
