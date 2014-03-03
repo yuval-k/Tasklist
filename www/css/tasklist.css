@@ -6,9 +6,12 @@
     color : red;
 }
 
+.small-button {
+width : 8rem;
 
-.datebutton {
-    width : auto;
+}
+
+.float-right {
     float : right;
     position:absolute;
     right:0.5rem;

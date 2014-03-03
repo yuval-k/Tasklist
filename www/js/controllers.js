@@ -8,9 +8,10 @@ var taskListApp = angular.module('taskListApp', ['ngAnimate']);
 
 function TaskListCtrl($scope, $http, $interval) {
 function getDay(delta) {
+        // get the day according to the local timezone
         var now = new Date();
-        var d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + delta)
-        return d.getTime();
+        // but store it in UTC. always UTC :)
+        return Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + delta);
 }
 
 
@@ -24,6 +25,7 @@ function Task(task) {
     var dueDate = this.getDueDate(words);
     var priority = this.getPriority(words);
 
+    // always UTC :)
     this.dueDate = dueDate;
     this.priority = priority;
 
@@ -123,11 +125,14 @@ Task.prototype.getPriority = function(words) {
    }
   
     function refreshTasks(value) {
+            // get the day according to the local timezone
             var now = new Date();
-            var today = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-            var tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime();
-            var afterTomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 2).getTime();
-            var weekFromToday = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7).getTime();
+
+            // data is stored as UTC, so convert.
+            var today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+            var tomorrow = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+            var afterTomorrow = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + 2);
+            var weekFromToday = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + 7);
 
           $scope.pastDue.length = 0;
           $scope.getTaskForDate(null, today).forEach(function(entry){$scope.pastDue.push(entry);});
@@ -160,8 +165,8 @@ Task.prototype.getPriority = function(words) {
     $scope.deleteDone = function() {
         var len = $scope.tasks.length
         while (len--) {
-            if ($scope.tasks[i].done) {
-                $scope.tasks.splice(i,1);
+            if ($scope.tasks[len].done) {
+                $scope.tasks.splice(len,1);
             }
         }
     }
@@ -172,6 +177,18 @@ Task.prototype.getPriority = function(words) {
       $interval.cancel(deleteDoneTask);
     });
 
+    /////////// http://stackoverflow.com/questions/20662140/using-angularjs-date-filter-with-utc-date
+
+    var toUTCDate = function(date){
+      var _utc = new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(),  date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds());
+      return _utc;
+    };
+
+    var millisUTCToLocalDate = function(millis){
+      return toUTCDate(new Date(millis));
+    };
+
+      $scope.millisUTCToLocalDate = millisUTCToLocalDate;
 }
 
 

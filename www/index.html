@@ -45,33 +45,41 @@
 
           <!-- The application main page -->
 
-          <div data-role="page" id="hello-page">
+          <header data-role="page" id="hello-page">
           <section>
-          <form ng-submit="addTask()" class="" role="form">
-          <div class="form-group">
-          <label class="" for="backendCredentials">Task</label>
+          <form ng-submit="addTask()" class="" role="form" >
+
+          <button class="small-button" style="float: right;" data-role="button" type="submit" >Add</button>
+
+
+          <div class="form-group" style="overflow: hidden;padding-right:2rem;">
+          <label class="" for="taskDescription" style="display:none">Task</label>
           <input
           id="taskDescription" class="form-control" type="text"
-          ng-model="newTask" placeholder="Write task here" required="required" />
+          ng-model="newTask" placeholder="Write new task here" required="required" style="width:100%"/>
+
           </div>
-          <button  data-role="button" type="submit" >Add</button>
+
           </form>
-</section>
+          </header>
 
           <section data-role="list" ng-repeat="category in categories">
           <div ng-show="category[1].length > 0">
 
-            <header class="large-font">{{category[0]}}</header>
+            <header class="large-font"><h1>{{category[0]}}</h1></header>
 
-          <ul data-role="listview" ng-repeat="task in category[1]">
-          <li>
+          <ul data-role="listview" ng-repeat="task in category[1] track by $index">
+          <li style="display:table">
+          <div style="   display: table-cell; vertical-align: middle">
+          <div style="display:inline-block">
           <input type="checkbox" ng-model="task.done"/>
 
         <span ng-class="{'done': task.done, 'overdue' : task.dueDate !=null && task.dueDate < getDay(0)}">{{task.desc}}</span>
-
-<button data-role="button" class="datebutton" onClick="displayDate()" ng-click="setTask(task)" ng-if="task.dueDate != null">{{task.dueDate|date}}</button>
-<button data-role="button" class="datebutton" onClick="displayDate()" ng-click="setTask(task)" ng-if="task.dueDate === null">No date</button>
-
+         </div>
+         <div style="display:inline-block; float:right" class="">
+<button data-role="button" class=" small-button" onClick="displayDate()" ng-click="setTask(task)" ng-if="task.dueDate != null">{{millisUTCToLocalDate(task.dueDate)|date}}</button>
+<button data-role="button" class=" small-button" onClick="displayDate()" ng-click="setTask(task)" ng-if="task.dueDate === null">No date</button>
+</div></div>
           </li>
           </ul>
           </div>
