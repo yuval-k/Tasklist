@@ -32,6 +32,7 @@ function Task(task) {
     this.projects = [];
     this.context = [];
     this.done = false;
+    this.notes = "";
     this.createdDate = new Date().getTime();
  
 
@@ -60,6 +61,12 @@ Task.prototype.getDueDate = function(words) {
    if (firstWord[0] === '+') {
        words.splice(0,1);
        return getDay(parseInt(firstWord.substring(1)));
+   }
+
+
+   if (firstWord[0] === '-') {
+       words.splice(0,1);
+       return getDay(parseInt(firstWord));
    }
 
    return null;

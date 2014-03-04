@@ -24,3 +24,12 @@ function hideDate() {
     UI.dialog('dateDialog').hide();
 };
 
+
+function displayNotes() {
+    UI.dialog('notesDialog').show();
+};
+
+function hideNotes() {
+    UI.dialog('notesDialog').hide();
+};
+
