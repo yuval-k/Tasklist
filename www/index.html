@@ -70,9 +70,9 @@
                         <menu>
                         <button data-role="button" ng-click="currentTask.dueDate = getDay(0)" onclick="hideDate()">Today</button>
                         <button data-role="button" ng-click="currentTask.dueDate = getDay(1)" onclick="hideDate()">Tomorrow</button>
+                        <input type="date" ng-model="chosenDate" placeholder="Other date" data-role="datebox" data-options='{"mode":"datebox", "useNewStyle":true}'/>
+                        <button data-role="button" ng-click="currentTask.dueDate = getChosenDate()" onclick="hideDate()">Other</button>
                         <button data-role="button" ng-click="currentTask.dueDate = null" onclick="hideDate()">No date</button>
-                        <input type="date" ng-model="currentDate" placeholder="Date" data-role="datebox" data-options='{"mode":"datebox", "useNewStyle":true}'/>
-                        <button data-role="button" ng-click="currentTask.dueDate = null" onclick="hideDate()">Other</button>
                         <button data-role="button" onclick="hideDate()">Cancel</button>
                         </menu>
                         </section>

@@ -189,6 +189,15 @@ Task.prototype.getPriority = function(words) {
     };
 
       $scope.millisUTCToLocalDate = millisUTCToLocalDate;
+
+    $scope.getChosenDate = function() {
+        if ($scope.chosenDate) {
+            var chosenDate = new Date(Date.parse($scope.chosenDate));
+            return Date.UTC(chosenDate.getFullYear(), chosenDate.getMonth(), chosenDate.getDate());
+        }
+        return null;
+
+    }
 }
 
 
