@@ -8,8 +8,8 @@
             "desktop": "Tasklist.desktop"
         }
     },
-    "maintainer": "Yuval Kohavi",
-    "name": "com.ubuntu.developer.yuval.kohavis.tasklist",
+    "maintainer": "Yuval Kohavi <yuval.kohavi@gmail.com>",
+    "name": "com.ubuntu.developer.yuval.kohavi.tasklist",
     "title": "Tasklist - ALPHA",
     "version": "0.1"
 }

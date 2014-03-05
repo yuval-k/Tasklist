@@ -51,12 +51,12 @@ function Task(task) {
 }
 
 Task.prototype.getDueDate = function(words) {
-   var firstWord = words[0];
-   if (firstWord.toLowerCase() == "today") {
-       // remove the first word from the original task, as we know it describes the date
-       words.splice(0,1);
-       return getDay(0);
-   }
+   var firstWord = words[0].toLowerCase();
+    if (firstWord == "today") {
+        // remove the first word from the original task, as we know it describes the date
+        words.splice(0,1);
+        return getDay(0);
+    }
 
    if (firstWord[0] === '+') {
        words.splice(0,1);
@@ -73,6 +73,22 @@ Task.prototype.getDueDate = function(words) {
 }
 
 Task.prototype.getPriority = function(words) {
+
+    var firstWord = words[0].toLowerCase();
+    if (firstWord === "a" ) {
+        words.splice(0,1);
+        return "A";
+    }
+    if (firstWord === "b" ) {
+        words.splice(0,1);
+        return "B";
+    }
+
+    if (firstWord === "c" ) {
+        words.splice(0,1);
+        return "C";
+    }
+
    return null;
 }
 
@@ -158,9 +174,14 @@ Task.prototype.getPriority = function(words) {
 
       }
 
-    function tasksChanged() {
+    function tasksChanged(newTasks, oldTAsks) {
         refreshTasks();
+
+        // serialize
         localStorage["tasks"] = JSON.stringify($scope.tasks);
+
+        // ideally find out exactly what changed and update a backend on it.
+        // i.e get the sets of remove tasks, new tasks, and changed tasks.
     }
 
     $scope.$watch('tasks', tasksChanged, true);
@@ -204,6 +225,13 @@ Task.prototype.getPriority = function(words) {
         }
         return null;
 
+    }
+
+    $scope.getTaskOrder = function(t) {
+        if (t === null) {
+            return "Z";
+        }
+        return t.priority;
     }
 }
 

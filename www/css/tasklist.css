@@ -22,3 +22,26 @@ padding-right:1em;
 padding-left:1em;
 width:auto;
 }
+
+.task-priority-A {
+  color : red;
+}
+
+.task-priority-B {
+  color : red;
+}
+
+.task-priority-C {
+  color : red;
+}
+
+.no-notes {
+    opacity:.3;
+}
+
+input.task-input {
+    background:rgba(0,0,0,0);
+    border:none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
