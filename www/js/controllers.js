@@ -3,15 +3,38 @@
  */
 
 
-var taskListApp = angular.module('taskListApp', ['ngAnimate']);
+//http://stackoverflow.com/questions/11868393/angularjs-inputtext-ngchange-fires-while-the-value-is-changing
+// override the default input to update on blur
+var taskListApp = angular.module('taskListApp', ['ngAnimate']).directive('ngModelOnblur', function() {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function(scope, elm, attr, ngModelCtrl) {
+            if (attr.type === 'radio' || attr.type === 'checkbox') return;
+
+            elm.unbind('input').unbind('keydown').unbind('change');
+            elm.bind('blur', function() {
+                scope.$apply(function() {
+                    ngModelCtrl.$setViewValue(elm.val());
+                });
+            });
+        }
+    };
+});;
 
 
 function TaskListCtrl($scope, $http, $interval) {
+
+    $scope.now = new Date();
+
+// get the day from the localtime zone in UTC.
 function getDay(delta) {
-        // get the day according to the local timezone
-        var now = new Date();
-        // but store it in UTC. always UTC :)
-        return Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + delta);
+    if (delta === null) {
+        return null;
+    }
+    // get the day according to the local timezone
+    // but store it in UTC. always UTC :)
+    return Date.UTC($scope.now.getFullYear(), $scope.now.getMonth(), $scope.now.getDate() + delta);
 }
 
 
@@ -20,6 +43,7 @@ function Task(task) {
         // this is an obj, and not a string. we are deserializing
         // http://stackoverflow.com/a/5873875/328631
         for (var prop in task) this[prop] = task[prop];
+        this.praseProjAndContext();
         return;
     }
 
@@ -40,20 +64,10 @@ function Task(task) {
     this.done = false;
     this.notes = "";
     this.createdDate = new Date().getTime();
- 
-
-    for (var i = 0; i < words.length; ++i){
-        var entry = words[i];
-        if(entry[0] === '@') {
-            this.projects.push(entry.substring(1));
-        }
-        if(entry[0] === '+') {
-            this.context.push(entry.substring(1));
-        }
-    }
-
 
     this.desc = words.join(' ');
+
+    this.praseProjAndContext();
 }
 
 Task.prototype.getDueDate = function(words) {
@@ -98,28 +112,53 @@ Task.prototype.getPriority = function(words) {
    return null;
 }
 
-/////////////////////////////////////////////////////////////////////////////
+Task.prototype.praseProjAndContext = function() {
+    var words = this.desc.split(' ');
+
+    this.projects.length=0;
+    this.context.length=0;
+    for (var i = 0; i < words.length; ++i){
+        var entry = words[i];
+        if(entry[0] === '@') {
+            this.projects.push(entry.substring(1));
+        }
+        if(entry[0] === '+') {
+            this.context.push(entry.substring(1));
+        }
+    }
+}
+
+Task.prototype.descChanged = function() {
+    // re-parse the context and project parts.
+    this.praseProjAndContext();
+}
+
+    Task.prototype.isOverdue = function(){
+
+        return this.dueDate !== null && this.dueDate < getDay(0);
+}
+Task.prototype.isToday = function(){
+
+    return getTaskFilter(getDay(0), getDay(1))(this);
+}
+
+/////////////////// Data models
     $scope.getDay = getDay;
     $scope.tasks = [];
 
     $scope.currentTask = null;
 
     $scope.currentT = "";
+    // submodels per category
+    $scope.categories = [
+                ["Overdue", [], [null,0]] ,
+                ["Today",   [], [0,1]] ,
+                ["Tomorrow",[], [1,2]] ,
+                ["Next Seven Days", [] , [2,7]] ,
+                ["Future", [], [7, null]]
+                        ];
 
-    // these will get updated form the parent obj when it is changed..
-    $scope.pastDue = [];
-    $scope.todaysTasks = [];
-    $scope.tomorrowsTasks = [];
-    $scope.nextSevenTasks = [];
-    $scope.futureTasks = [];
-
-    $scope.categories = [["Overdue", $scope.pastDue] ,
-                         ["Today",   $scope.todaysTasks] ,
-                         ["Tomorrow",$scope.tomorrowsTasks] ,
-                         ["Next Seven Days",   $scope.nextSevenTasks] ,
-                         ["Future",   $scope.futureTasks]];
-
-
+////// Add a new task
   $scope.addTask = function() {
     var task = $scope.newTask;
     if (task &&  task.length) {
@@ -128,60 +167,35 @@ Task.prototype.getPriority = function(words) {
     }
   };
 
-  // if end is null includes all the tasks without a date
-  // list is ordered
-  $scope.getTaskForDate = function(start, end) {
-     var result = [];
-     for (var i = 0; i < $scope.tasks.length; ++i) {
-         var task = $scope.tasks[i];
+/////////////////////////// Task filters according to time range.
+    function  isTaskInRange(task, start, end) {
          if (task.dueDate === null) {
              if(end === null) {
-                 result.push(task);
+                 return true;
              }
          } else if (start === null && task.dueDate < end) {
-             result.push(task);
+             return true;
          } else if (end === null && task.dueDate >= start) {
-             result.push(task);
+             return true;
          } else if (task.dueDate >= start && task.dueDate < end) {
-             result.push(task);
+             return true;
          }
-     }
-     return result;
-  }
+        return false;
+    }
 
-   $scope.setTask = function(task) {
-       $scope.currentTask = task;
-   }
-  
-    function refreshTasks(value) {
-            // get the day according to the local timezone
-            var now = new Date();
+    function getTaskFilter(start, end) {
+        return function(task) {
+            return isTaskInRange(task, start, end);
+        }
 
-            // data is stored as UTC, so convert.
-            var today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
-            var tomorrow = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-            var afterTomorrow = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + 2);
-            var weekFromToday = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate() + 7);
+    }
+   $scope.getTaskFilter = getTaskFilter;
 
-          $scope.pastDue.length = 0;
-          $scope.getTaskForDate(null, today).forEach(function(entry){$scope.pastDue.push(entry);});
 
-          $scope.todaysTasks.length = 0;
-          $scope.getTaskForDate(today, tomorrow).forEach(function(entry){$scope.todaysTasks.push(entry);});
 
-          $scope.tomorrowsTasks.length = 0;
-          $scope.getTaskForDate(tomorrow, afterTomorrow).forEach(function(entry){$scope.tomorrowsTasks.push(entry);});
-
-          $scope.nextSevenTasks.length = 0;
-          $scope.getTaskForDate(afterTomorrow, weekFromToday).forEach(function(entry){$scope.nextSevenTasks.push(entry);});
-
-          $scope.futureTasks.length = 0;
-          $scope.getTaskForDate(weekFromToday, null).forEach(function(entry){$scope.futureTasks.push(entry);});
-
-      }
+/////////// watch for changes and save them. remove done tasks
 
     function tasksChanged(newTasks, oldTAsks) {
-        refreshTasks();
 
         // serialize
         localStorage["tasks"] = JSON.stringify($scope.tasks);
@@ -192,12 +206,6 @@ Task.prototype.getPriority = function(words) {
 
     $scope.$watch('tasks', tasksChanged, true);
 
-    if(localStorage["tasks"]) {
-        JSON.parse(localStorage["tasks"]).forEach(function(t) {
-            $scope.tasks.push(new Task(t));
-        }
-        );
-    }
 
     $scope.deleteDone = function() {
         var len = $scope.tasks.length
@@ -214,6 +222,7 @@ Task.prototype.getPriority = function(words) {
       $interval.cancel(deleteDoneTask);
     });
 
+////////////////// make sure dates are properly displayed in the UI
     /////////// http://stackoverflow.com/questions/20662140/using-angularjs-date-filter-with-utc-date
 
     var toUTCDate = function(date){
@@ -225,7 +234,7 @@ Task.prototype.getPriority = function(words) {
       return toUTCDate(new Date(millis));
     };
 
-      $scope.millisUTCToLocalDate = millisUTCToLocalDate;
+    $scope.millisUTCToLocalDate = millisUTCToLocalDate;
 
     $scope.getChosenDate = function() {
         if ($scope.chosenDate) {
@@ -235,14 +244,29 @@ Task.prototype.getPriority = function(words) {
         return null;
 
     }
-
+////////////// Ordering
     $scope.getTaskOrder = function(t) {
         if (t.priority === null) {
+            // null is low priority
             return "Z";
         }
         return t.priority;
     }
+
+    // set the current task - for dialog boxes.
+   $scope.setTask = function(task) {
+       $scope.currentTask = task;
+   }
+
+////////// Load existing tasks
+    if(localStorage["tasks"]) {
+        JSON.parse(localStorage["tasks"]).forEach(function(t) {
+            $scope.tasks.push(new Task(t));
+        }
+        );
+    }
 }
+
 
 
 taskListApp.controller('TaskListCtrl', TaskListCtrl);

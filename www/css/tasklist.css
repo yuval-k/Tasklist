@@ -2,8 +2,14 @@
    text-decoration:line-through
 }
 
-.overdue {
+.overdue,
+input[type="text"].overdue {
     color : red;
+}
+
+.today,
+input[type="text"].today {
+    color : blue;
 }
 
 .small-button {
@@ -28,11 +34,11 @@ width:auto;
 }
 
 .task-priority-B {
-  color : red;
+  color : orange;
 }
 
 .task-priority-C {
-  color : red;
+  color : green;
 }
 
 .no-prop {
@@ -45,4 +51,6 @@ input.task-input {
     -webkit-box-shadow: none;
     box-shadow: none;
     width:100%;
+
+    text-overflow: ellipsis;
 }
