@@ -33,3 +33,12 @@ function hideNotes() {
     UI.dialog('notesDialog').hide();
 };
 
+
+function displayPriority() {
+    UI.dialog('priorityDialog').show();
+};
+
+function hidePriority() {
+    UI.dialog('priorityDialog').hide();
+};
+

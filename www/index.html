@@ -49,8 +49,8 @@
                 <div ng-show="category[1].length>
                          0" style="margin-top:1rem"> <header class="large-font">
                         <h1>{{category[0]}}</h1>
-                        </header>
-                        <ul data-role="listview" ng-repeat="task in category[1] track by $index">
+                        </header>'
+                        <ul data-role="listview" ng-repeat="task in category[1]|orderBy:getTaskOrder track by $index">
                                 <li style="display:table">
                                 <div style=" display: table-cell; vertical-align: middle">
                                         <div style="display:inline-block; float:right;vertical-align: middle" class="">
@@ -61,10 +61,16 @@
 
                                         </div>
                                         <div style="vertical-align: middle;overflow: hidden;padding-right:2rem;">
+                                        <!-- http://stackoverflow.com/questions/6938900/css-input-take-remaining-space -->
                                                 <div style=" float: left">
                                                         <input type="checkbox" ng-model="task.done"/>
-                                                        <span ng-click="setTask(task)" onclick="displayNotes()"  ng-class="{'notes': task.notes, 'no-notes': !task.notes}"><strong>{N}</strong></span>
-                                                        <span ng-if="task.priority" class="task-priority-{{task.priority}}"><strong>({{task.priority}})</strong></span>
+                                                        <span ng-click="setTask(task)" onclick="displayNotes()"  ng-class="{'no-prop': !task.notes}"><strong>{N}</strong></span>
+                                                        <span ng-click="setTask(task)" onclick="displayPriority()" class="task-priority-{{task.priority}}">
+
+                                                            <span ng-if="task.priority"><strong>({{task.priority}})</strong></span>
+                                                            <span ng-if="!task.priority" class="no-prop">{P}</span>
+
+                                                        </span>
                                                 </div>
                                                 <div style="display:block;overflow: hidden"  ng-class="{'done': task.done, 'overdue' : task.dueDate !=null && task.dueDate < getDay(0)}" >
                                                     <input class="task-input" type="text" ng-model="task.desc" />
@@ -94,6 +100,23 @@
                         <menu>
                         <textarea ng-model="currentTask.notes"></textarea>
                         <button data-role="button" onclick="hideNotes()">Close</button>
+                        </menu>
+                        </section>
+                </div>
+
+                <div data-role="dialog" id="priorityDialog" class="priority-dialog">
+                        <section>
+                        <h1>Choose priority here:</h1>
+                        <menu>
+                        <button data-role="button" ng-click="currentTask.priority='A'" onclick="hidePriority()">A</button>
+
+                        <button data-role="button" ng-click="currentTask.priority='B'" onclick="hidePriority()">B</button>
+
+                        <button data-role="button" ng-click="currentTask.priority='C'" onclick="hidePriority()">C</button>
+
+                        <button data-role="button" ng-click="currentTask.priority=null" onclick="hidePriority()">None</button>
+
+                        <button data-role="button" onclick="hidePriority()">Close</button>
                         </menu>
                         </section>
                 </div>

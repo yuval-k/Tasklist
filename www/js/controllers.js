@@ -16,6 +16,12 @@ function getDay(delta) {
 
 
 function Task(task) {
+    if (!(typeof task == 'string' || task instanceof String)) {
+        // this is an obj, and not a string. we are deserializing
+        // http://stackoverflow.com/a/5873875/328631
+        for (var prop in task) this[prop] = task[prop];
+        return;
+    }
 
     //var words = task.split(/\s+/);
     var words = task.split(' ');
@@ -187,7 +193,10 @@ Task.prototype.getPriority = function(words) {
     $scope.$watch('tasks', tasksChanged, true);
 
     if(localStorage["tasks"]) {
-        $scope.tasks = JSON.parse(localStorage["tasks"]);
+        JSON.parse(localStorage["tasks"]).forEach(function(t) {
+            $scope.tasks.push(new Task(t));
+        }
+        );
     }
 
     $scope.deleteDone = function() {
@@ -228,7 +237,7 @@ Task.prototype.getPriority = function(words) {
     }
 
     $scope.getTaskOrder = function(t) {
-        if (t === null) {
+        if (t.priority === null) {
             return "Z";
         }
         return t.priority;
