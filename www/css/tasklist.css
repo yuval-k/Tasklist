@@ -44,4 +44,5 @@ input.task-input {
     border:none;
     -webkit-box-shadow: none;
     box-shadow: none;
+    width:100%;
 }
