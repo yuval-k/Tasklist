@@ -63,13 +63,11 @@
                                         <div style="vertical-align: middle;overflow: hidden;padding-right:2rem;">
                                         <!-- http://stackoverflow.com/questions/6938900/css-input-take-remaining-space -->
                                                 <div style=" float: left">
-                                                        <input type="checkbox" ng-model="task.done"/>
+                                                        <input type="checkbox" ng-model="task.done" ng-change="doneClicked(task)"/>
                                                         <span ng-click="setTask(task)" onclick="displayNotes()"  ng-class="{'no-prop': !task.notes}"><strong>{N}</strong></span>
                                                         <span ng-click="setTask(task)" onclick="displayPriority()" class="task-priority-{{task.priority}}">
-
                                                             <span ng-if="task.priority"><strong>({{task.priority}})</strong></span>
                                                             <span ng-if="!task.priority" class="no-prop">{P}</span>
-
                                                         </span>
                                                 </div>
                                                 <div style="display:block;overflow: hidden" >

@@ -25,7 +25,15 @@ var taskListApp = angular.module('taskListApp', ['ngAnimate']).directive('ngMode
 
 function TaskListCtrl($scope, $http, $interval) {
 
-    $scope.now = new Date();
+    function updateToday() {
+
+        var now =  new Date();
+        return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    }
+
+    $scope.today = updateToday();
+
 
 // get the day from the localtime zone in UTC.
 function getDay(delta) {
@@ -34,7 +42,8 @@ function getDay(delta) {
     }
     // get the day according to the local timezone
     // but store it in UTC. always UTC :)
-    return Date.UTC($scope.now.getFullYear(), $scope.now.getMonth(), $scope.now.getDate() + delta);
+
+    return Date.UTC($scope.today.getFullYear(), $scope.today.getMonth(), $scope.today.getDate() + delta);
 }
 
 
@@ -206,22 +215,30 @@ Task.prototype.isToday = function(){
 
     $scope.$watch('tasks', tasksChanged, true);
 
-
-    $scope.deleteDone = function() {
+    function removeTask(task){
         var len = $scope.tasks.length
         while (len--) {
-            if ($scope.tasks[len].done) {
+            if ($scope.tasks[len] === task) {
                 $scope.tasks.splice(len,1);
+                return;
             }
         }
     }
+    $scope.doneClicked = function(task) {
+        if (task.done) {
+            task.removeTask = setTimeout(function(){removeTask(task)}, 5*1000);
+        } else if (task.removeTask ) {
+            clearTimeout(task.removeTask);
+            task.removeTask = null;
+        }
 
-    var deleteDoneTask = $interval($scope.deleteDone, 5*1000);
+    }
+
+    var updateTodayTask = $interval(function(){$scope.today = updateToday();}, 5*1000);
     $scope.$on('$destroy', function() {
       // Make sure that the interval is destroyed too
-      $interval.cancel(deleteDoneTask);
+      $interval.cancel(updateTodayTask);
     });
-
 ////////////////// make sure dates are properly displayed in the UI
     /////////// http://stackoverflow.com/questions/20662140/using-angularjs-date-filter-with-utc-date
 
