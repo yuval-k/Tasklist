@@ -160,11 +160,12 @@ Task.prototype.isToday = function(){
     $scope.currentT = "";
     // submodels per category
     $scope.categories = [
-                ["Overdue", [], [null,0]] ,
-                ["Today",   [], [0,1]] ,
-                ["Tomorrow",[], [1,2]] ,
-                ["Next Seven Days", [] , [2,7]] ,
-                ["Future", [], [7, null]]
+                // [Header name, model(just leave empty list), date range, css class]
+                ["Overdue", [], [null,0],'overdue'] ,
+                ["Today",   [], [0,1] , 'today'],
+                ["Tomorrow",[], [1,2], 'tomorrow'] ,
+                ["Next Seven Days", [] , [2,7],'week'] ,
+                ["Future", [], [7, null], "future"]
                         ];
 
 ////// Add a new task

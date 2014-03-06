@@ -3,12 +3,12 @@
 }
 
 .overdue,
-input[type="text"].overdue {
+div.overdue input[type="text"] {
     color : red;
 }
 
 .today,
-input[type="text"].today {
+div.today input[type="text"] {
     color : blue;
 }
 
