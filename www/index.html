@@ -14,6 +14,8 @@
     <script src="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/js/dialogs.js"></script>
     <script src="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/js/page.js"></script>
     <script src="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/js/pagestacks.js"></script>
+    <script src="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/js/popovers.js"></script>
+    <script src="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/js/toolbars.js"></script>
     <script src="/usr/share/ubuntu-html5-ui-toolkit/0.1/ambiance/js/tabs.js"></script>
     <!-- Cordova platform API access - Uncomment this to have access to the Javascript APIs -->
     <!-- <script src="cordova/cordova.js"></script> -->
@@ -23,6 +25,7 @@
     <script src="js/angular.js"></script>
     <script src="js/angular-animate.js"></script>
     <script src="js/controllers.js"></script>
+    <script src="js/underscore.js"></script>
 
     <link href="css/tasklist.css" rel="stylesheet" type="text/css"/>
 
@@ -35,6 +38,25 @@
         </ul>
         </header>
         <div data-role="content">
+                <div id="filterList">
+                <strong>Filters:</strong>
+                <ul class="menuList">
+                    <li>
+                            <span>Project</span>
+                            <select multiple="multiple" ng-model="selectedProjects" ng-disabled="allProjects.length == 0">
+                            <option ng-repeat="proj in allProjects">{{proj}}</option>
+                            </select>
+                    </li>
+                    <li>
+                            <span>Context</span>
+                            <select multiple="multiple" ng-model="selectedContext" ng-disabled="allContext.length == 0">
+                            <option ng-repeat="context in allContext">{{context}}</option>
+                            </select>
+                    </li>
+                    </ul>
+
+                </div>
+
                 <!-- The application main page -->
                 <header data-role="page" id="hello-page">
                 <form ng-submit="addTask()" class="" role="form">
@@ -45,12 +67,14 @@
                         </div>
                 </form>
                 </header>
+
+
                 <section data-role="list" ng-repeat="category in categories">
-                <div ng-show="category[1].length>0" style="margin-top:1rem" class="{{category[3]}}"> <header class="large-font">
+                <div ng-show="category[1].length>0" style="margin-top:1rem" ng-class="category[3]"> <header class="large-font">
                         <h1>{{category[0]}}</h1>
                         </header>
                         <!-- http://stackoverflow.com/questions/14866185/number-of-items-in-a-list-filtered-angularjs -->
-                        <ul data-role="listview" ng-repeat="task in category[1] = (tasks|filter:getTaskFilter(getDay(category[2][0]), getDay(category[2][1]))|orderBy:getTaskOrder) track by $index">
+                        <ul data-role="listview" ng-repeat="task in category[1] = (tasks|filter:isTaskInProjects|filter:isTaskInContext|filter:getTaskFilter(getDay(category[2][0]), getDay(category[2][1]))|orderBy:getTaskOrder) track by $index">
                                 <li style="display:table">
                                 <div style=" display: table-cell; vertical-align: middle">
                                         <div style="display:inline-block; float:right;vertical-align: middle" class="">
@@ -119,6 +143,27 @@
                         </section>
                 </div>
         </div>
+
+<!--
+        <footer data-role="footer" class="revealed" id="footerID">
+
+           <nav>
+             <ul>
+               <li>
+                 <a href="#" id="home">Home</a>
+               </li>
+               <li> <span id="contextPopBase">Context</span>
+               <div class="popover" data-gravity="s" id="contextPopover">
+                  <ul class="list">
+                    <li class="active" ><a href="#">All</a></li>
+                    <li                ><a href="#">blah</a></li>
+                  </ul>
+                </div>
+               </li>
+             </nav>
+           </ul>
+         </footer>
+         -->
 </div>
 </body>
 </html>

@@ -142,8 +142,7 @@ Task.prototype.descChanged = function() {
     // re-parse the context and project parts.
     this.praseProjAndContext();
 
-    $scope.updateAllProjects();
-    $scope.updateAllContext();
+    $scope.updateProjAndContext();
 }
 
 Task.prototype.isOverdue = function(){
@@ -188,27 +187,37 @@ Task.prototype.isToday = function(){
 
 
     $scope.allProjects = [];
-    $scope.updateAllProjects = function() {
-          $scope.allProjects = _.chain($scope.tasks)
+    $scope.allContext = [];
+
+    function updateAllProjects() {
+          var result = _.chain($scope.tasks)
             .pluck('projects')
             .flatten()
             .unique()
             .value()
             .sort();
-        };
-    $scope.updateAllProjects();
+
+        if (!_.isEqual($scope.allProjects, result)) {
+            $scope.allProjects = result;
+        }
+    };
 
 
-    $scope.allContext = [];
-    $scope.updateAllContext = function() {
-      $scope.selectedContext = _.chain($scope.tasks)
+    function updateAllContext() {
+      $scope.allContext = _.chain($scope.tasks)
         .pluck('context')
         .flatten()
         .unique()
         .value()
         .sort();
     };
-    $scope.updateAllContext();
+
+    $scope.updateProjAndContext = function() {
+        updateAllProjects();
+        updateAllContext();
+    }
+
+    $scope.updateProjAndContext();
 
     $scope.isTaskInProjects = function(task) {
         if ($scope.selectedProjects.length === 0) {
@@ -230,6 +239,8 @@ Task.prototype.isToday = function(){
     if (task &&  task.length) {
         $scope.tasks.push(new Task(task));
         $scope.newTask = "";
+
+        $scope.updateProjAndContext();
     }
   };
 
@@ -277,6 +288,9 @@ Task.prototype.isToday = function(){
         while (len--) {
             if ($scope.tasks[len] === task) {
                 $scope.tasks.splice(len,1);
+
+                $scope.updateProjAndContext();
+
                 return;
             }
         }

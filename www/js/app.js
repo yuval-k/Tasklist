@@ -20,8 +20,8 @@ $(document).ready(function() {
       //UI.pagestack.push("main");
 //    });
 
-    var popBase = document.getElementById("contextPopBase");
-    var popover = UI.popover(popBase, "contextPopover");
+//    var popBase = document.getElementById("contextPopBase");
+//    var popover = UI.popover(popBase, "contextPopover");
 });
 
 function displayDate() {

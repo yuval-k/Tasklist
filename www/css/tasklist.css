@@ -89,3 +89,17 @@ a.tooltip span
     -webkit-box-shadow: 5px 5px 8px #CCC;
     box-shadow: 5px 5px 8px #CCC;
 }
+
+
+.menuList li + li::before {
+    content: " | ";
+}
+
+
+.menuList  li{
+display:inline;
+}
+
+.menuList {
+    display:inline;
+}
