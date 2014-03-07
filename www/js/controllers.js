@@ -135,17 +135,22 @@ Task.prototype.praseProjAndContext = function() {
             this.context.push(entry.substring(1));
         }
     }
+
 }
 
 Task.prototype.descChanged = function() {
     // re-parse the context and project parts.
     this.praseProjAndContext();
+
+    $scope.updateAllProjects();
+    $scope.updateAllContext();
 }
 
-    Task.prototype.isOverdue = function(){
+Task.prototype.isOverdue = function(){
 
         return this.dueDate !== null && this.dueDate < getDay(0);
 }
+
 Task.prototype.isToday = function(){
 
     return getTaskFilter(getDay(0), getDay(1))(this);
@@ -154,6 +159,13 @@ Task.prototype.isToday = function(){
 /////////////////// Data models
     $scope.getDay = getDay;
     $scope.tasks = [];
+    ////////// Load existing tasks
+    if(localStorage["tasks"]) {
+        JSON.parse(localStorage["tasks"]).forEach(function(t) {
+            $scope.tasks.push(new Task(t));
+        }
+        );
+    }
 
     $scope.currentTask = null;
 
@@ -167,6 +179,50 @@ Task.prototype.isToday = function(){
                 ["Next Seven Days", [] , [2,7],'week'] ,
                 ["Future", [], [7, null], "future"]
                         ];
+
+    // get projects
+    // http://stackoverflow.com/questions/14163027/show-an-aggregated-list-in-angularjs
+
+    $scope.selectedProjects = [];
+    $scope.selectedContext = [];
+
+
+    $scope.allProjects = [];
+    $scope.updateAllProjects = function() {
+          $scope.allProjects = _.chain($scope.tasks)
+            .pluck('projects')
+            .flatten()
+            .unique()
+            .value()
+            .sort();
+        };
+    $scope.updateAllProjects();
+
+
+    $scope.allContext = [];
+    $scope.updateAllContext = function() {
+      $scope.selectedContext = _.chain($scope.tasks)
+        .pluck('context')
+        .flatten()
+        .unique()
+        .value()
+        .sort();
+    };
+    $scope.updateAllContext();
+
+    $scope.isTaskInProjects = function(task) {
+        if ($scope.selectedProjects.length === 0) {
+            return true;
+        }
+        return _.intersection(task.projects, $scope.selectedProjects).length > 0;
+    }
+
+    $scope.isTaskInContext = function(task) {
+        if ($scope.selectedContext.length === 0) {
+            return true;
+        }
+        return _.intersection(task.context, $scope.selectedContext).length > 0;
+    }
 
 ////// Add a new task
   $scope.addTask = function() {
@@ -276,13 +332,6 @@ Task.prototype.isToday = function(){
        $scope.currentTask = task;
    }
 
-////////// Load existing tasks
-    if(localStorage["tasks"]) {
-        JSON.parse(localStorage["tasks"]).forEach(function(t) {
-            $scope.tasks.push(new Task(t));
-        }
-        );
-    }
 }
 
 

@@ -13,8 +13,16 @@ $(document).ready(function() {
         if (console && console.log)
             console.log('Platform layer API ready');
     }, false);
-});
 
+
+//    var toolbar = UI.footer("footerID");
+//    UI.button('home').click(function () {
+      //UI.pagestack.push("main");
+//    });
+
+    var popBase = document.getElementById("contextPopBase");
+    var popover = UI.popover(popBase, "contextPopover");
+});
 
 function displayDate() {
     UI.dialog('dateDialog').show();
